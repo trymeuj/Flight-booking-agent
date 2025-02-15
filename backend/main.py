@@ -1,14 +1,23 @@
 from fastapi import FastAPI
-from agent import flight_agent
 from pydantic import BaseModel
+from agent import flight_agent
 
 app = FastAPI()
 
-class FlightQuery(BaseModel):
-    query: str
+class UserQuery(BaseModel):
+    query: str  # Natural language query
 
 @app.post("/ask")
-async def ask_flight_agent(request: FlightQuery):
-    """Handles user queries and invokes the AI agent."""
+async def ask_flight_agent(request: UserQuery):
+    print("point 1")
+    """Processes user input and calls the correct API."""
     response = flight_agent.invoke({"query": request.query})
-    return response
+    print("point 2")
+    print("response in main.py:", response)
+    if not response:
+        print("Agent returned None or empty response")
+        return {"error": "No valid response from agent"}
+
+    flights = response["result"]["data"]
+    return flights
+

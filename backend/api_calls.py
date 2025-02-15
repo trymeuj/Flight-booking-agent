@@ -1,6 +1,8 @@
 import requests
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 AVIATIONSTACK_API_KEY = os.getenv("AVIATIONSTACK_API_KEY")
 
@@ -18,15 +20,15 @@ def get_amadeus_access_token():
     response = requests.post(url, data=data)
     return response.json().get("access_token")
 
-def search_flight_api(query):
-    """Search flights via Amadeus API"""
+def search_flight_api(origin, destination, departure_date):
+    """Search flights dynamically using Amadeus API"""
     token = get_amadeus_access_token()
     url = "https://test.api.amadeus.com/v2/shopping/flight-offers"
     headers = {"Authorization": f"Bearer {token}"}
     params = {
-        "originLocationCode": "DEL",
-        "destinationLocationCode": "NYC",
-        "departureDate": "2025-02-20",
+        "originLocationCode": origin,
+        "destinationLocationCode": destination,
+        "departureDate": departure_date,
         "adults": 1
     }
     response = requests.get(url, headers=headers, params=params)
